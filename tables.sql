@@ -28,6 +28,25 @@ CREATE TABLE Artists(
 	IsActive BOOLEAN DEFAULT TRUE
 );
 
+CREATE TABLE Performances(
+	PerformanceId SERIAL PRIMARY KEY,
+	FestivalId INT NOT NULL REFERENCES Festivals(FestivalId),
+	StageId INT NOT NULL REFERENCES Stages(StageId),
+	ArtistId INT NOT NULL REFERENCES Artists(ArtistId),
+ 	StartTime TIMESTAMP NOT NULL,
+	EndTime TIMESTAMP NOT NULL CHECK(StartTime > EndTime),
+	ExpectedVisitors INT CHECK(ExpextedVisitors > 0)
+);
+
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
+ALTER TABLE Performances
+ADD CONSTRAINT no_overlapping_performance
+EXCLUDE USING gist (
+    StageId WITH =,
+    tstzrange(StartTime, EndTime) WITH &&
+);
+
 
 
 
