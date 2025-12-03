@@ -34,7 +34,7 @@ CREATE TABLE Performances(
 	StageId INT NOT NULL REFERENCES Stages(StageId),
 	ArtistId INT NOT NULL REFERENCES Artists(ArtistId),
  	StartTime TIMESTAMP NOT NULL,
-	EndTime TIMESTAMP NOT NULL CHECK(StartTime > EndTime),
+	EndTime TIMESTAMP NOT NULL CHECK(StartTime < EndTime),
 	ExpectedVisitors INT CHECK(ExpectedVisitors > 0)
 );
 
@@ -58,12 +58,28 @@ CREATE TABLE Visitors(
 );
 
 CREATE TABLE Tickets(
-	TicedId SERIAL PRIMARY KEY,
+	TicketId SERIAL PRIMARY KEY,
 	Type VARCHAR(20) NOT NULL CHECK(Type IN ('oneDay', 'festival', 'VIP', 'camp')),
 	Price NUMERIC(10, 2) NOT NULL CHECK (Price > 0),
 	Description TEXT,
 	Validity VARCHAR(20) NOT NULL CHECK(Validity IN ('day', 'festival'))
 );
+
+CREATE TABLE Orders(
+	OrderId SERIAL PRIMARY KEY,
+	VisitorId INT NOT NULL REFERENCES Visitors(VisitorId),
+	FestivalId INT NOT NULL REFERENCES Festivals(FestivalId),
+	OrderDateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	TotalPrice NUMERIC(10,2) NOT NULL CHECK (TotalPrice >= 0)
+);
+
+CREATE TABLE OrderItems(
+	OrderItemId SERIAL PRIMARY KEY,
+	OrderId INT NOT NULL REFERENCES Orders(OrderId),
+	TicketId INT NOT NULL REFERENCES Tickets(TicketId),
+	Quantity INT NOT NULL CHECK (Quantity > 0)
+);
+
 
 
 
