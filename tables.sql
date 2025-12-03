@@ -9,7 +9,7 @@ CREATE TABLE Festivals(
 	HasCamp BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE Stage (
+CREATE TABLE Stages (
     StageId SERIAL PRIMARY KEY,
     FestivalId INT NOT NULL REFERENCES Festivals(FestivalId),
     Name VARCHAR(30) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE Performances(
 	ArtistId INT NOT NULL REFERENCES Artists(ArtistId),
  	StartTime TIMESTAMP NOT NULL,
 	EndTime TIMESTAMP NOT NULL CHECK(StartTime > EndTime),
-	ExpectedVisitors INT CHECK(ExpextedVisitors > 0)
+	ExpectedVisitors INT CHECK(ExpectedVisitors > 0)
 );
 
 CREATE EXTENSION IF NOT EXISTS btree_gist;
@@ -47,7 +47,23 @@ EXCLUDE USING gist (
     tstzrange(StartTime, EndTime) WITH &&
 );
 
+CREATE TABLE Visitors(
+	VisitorId SERIAL PRIMARY KEY,
+	FirstName VARCHAR(30) NOT NULL,
+	LastName VARCHAR(30) NOT NULL,
+	BirthDate DATE NOT NULL,
+	City VARCHAR (30) NOT NULL,
+	Email VARCHAR(50) NOT NULL UNIQUE CHECK (Email LIKE '%@%'),
+	Country VARCHAR(50) NOT NULL
+);
 
+CREATE TABLE Tickets(
+	TicedId SERIAL PRIMARY KEY,
+	Type VARCHAR(20) NOT NULL CHECK(Type IN ('oneDay', 'festival', 'VIP', 'camp')),
+	Price NUMERIC(10, 2) NOT NULL CHECK (Price > 0),
+	Description TEXT,
+	Validity VARCHAR(20) NOT NULL CHECK(Validity IN ('day', 'festival'))
+);
 
 
 
