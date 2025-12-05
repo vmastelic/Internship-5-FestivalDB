@@ -44,8 +44,9 @@ ALTER TABLE Performances
 ADD CONSTRAINT no_overlapping_performance
 EXCLUDE USING gist (
     StageId WITH =,
-    tstzrange(StartTime, EndTime) WITH &&
+    tsrange(StartTime, EndTime) WITH &&
 );
+
 
 CREATE TABLE Visitors(
 	VisitorId SERIAL PRIMARY KEY,
@@ -79,6 +80,28 @@ CREATE TABLE OrderItems(
 	TicketId INT NOT NULL REFERENCES Tickets(TicketId),
 	Quantity INT NOT NULL CHECK (Quantity > 0)
 );
+
+CREATE TABLE Mentors(
+	MentorId SERIAL PRIMARY KEY,
+	FirstName VARCHAR(30) NOT NULL,
+	LastName VARCHAR(30) NOT NULL,
+	BirthYear INT NOT NULL CHECK (BirthYear >= 1925),
+	ExpertiseArea VARCHAR(30) NOT NULL,
+	YearExperience INT NOT NULL CHECK (YearExperience >= 2),
+	CHECK(EXTRACT(YEAR FROM CURRENT_DATE) - BirthYear >= 18)
+);
+
+CREATE TABLE Workshops(
+	WorkshopId SERIAL PRIMARY KEY,
+	MentorId INT NOT NULL REFERENCES Mentors(MentorId),
+	FestivalId INT NOT NULL REFERENCES Festivals(FestivalId),
+	Name VARCHAR(30) NOT NULL,
+	Level VARCHAR(20) NOT NULL CHECK(Level IN ('beginner', 'intermediate', 'advanced')),
+	MaxParticipants INT NOT NULL CHECK (MaxParticipants > 0),
+	DurationHours INT NOT NULL CHECK (DurationHours > 0),
+	RequiresKnowledge BOOLEAN DEFAULT FALSE
+);
+
 
 
 
