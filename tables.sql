@@ -12,7 +12,7 @@ CREATE TABLE Festivals(
 CREATE TABLE Stages (
     StageId SERIAL PRIMARY KEY,
     FestivalId INT NOT NULL REFERENCES Festivals(FestivalId),
-    Name VARCHAR(30) NOT NULL,
+    Name VARCHAR(100) NOT NULL,
     Location VARCHAR(20) NOT NULL CHECK (Location IN ('main', 'forest', 'beach')),
     MaxCapacity INT CHECK (MaxCapacity > 0),
     Covered BOOLEAN DEFAULT FALSE,
@@ -21,7 +21,7 @@ CREATE TABLE Stages (
 
 CREATE TABLE Artists(
 	ArtistId SERIAL PRIMARY KEY,
-	Name VARCHAR(30) NOT NULL,
+	Name VARCHAR(100) NOT NULL,
 	Country VARCHAR(30) NOT NULL,
 	Genre VARCHAR(30) NOT NULL,
 	MembersCount INT CHECK(MembersCount > 0),
@@ -38,6 +38,10 @@ CREATE TABLE Performances(
 	ExpectedVisitors INT CHECK(ExpectedVisitors > 0)
 );
 
+ALTER TABLE Performances
+ALTER COLUMN StartTime TYPE TIME,
+ALTER COLUMN EndTime TYPE TIME;
+
 CREATE EXTENSION IF NOT EXISTS btree_gist;
 
 ALTER TABLE Performances
@@ -47,6 +51,8 @@ EXCLUDE USING gist (
     tsrange(StartTime, EndTime) WITH &&
 );
 
+ALTER TABLE Performances
+DROP CONSTRAINT IF EXISTS no_overlapping_performance;
 
 CREATE TABLE Visitors(
 	VisitorId SERIAL PRIMARY KEY,
@@ -54,7 +60,7 @@ CREATE TABLE Visitors(
 	LastName VARCHAR(30) NOT NULL,
 	BirthDate DATE NOT NULL,
 	City VARCHAR (30) NOT NULL,
-	Email VARCHAR(50) NOT NULL UNIQUE CHECK (Email LIKE '%@%'),
+	Email VARCHAR(150) NOT NULL UNIQUE CHECK (Email LIKE '%@%'),
 	Country VARCHAR(50) NOT NULL
 );
 
@@ -110,6 +116,9 @@ CREATE TABLE WorkshopRegistrations(
 	RegistrationTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	UNIQUE (VisitorId, WorkshopId)
 );
+
+ALTER TABLE WorkshopRegistrations
+ALTER COLUMN RegistrationTime TYPE TIME;
 
 CREATE TABLE Staff(
 	StaffId SERIAL PRIMARY KEY,
