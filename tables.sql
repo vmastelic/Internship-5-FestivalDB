@@ -111,6 +111,19 @@ CREATE TABLE WorkshopRegistrations(
 	UNIQUE (VisitorId, WorkshopId)
 );
 
+CREATE TABLE Staff(
+	StaffId SERIAL PRIMARY KEY,
+	FestivalId INT NOT NULL REFERENCES Festivals(FestivalId),
+	FirstName VARCHAR(30) NOT NULL,
+	LastName VARCHAR(30) NOT NULL,
+	BirthDate DATE NOT NULL,
+	Role VARCHAR(50) NOT NULL CHECK (Role IN ('organizer','technician','security','volunteer')),
+	Concact VARCHAR(100),
+	HasSecurityTraining BOOLEAN DEFAULT FALSE,
+	CHECK(Role <> 'security' OR EXTRACT (YEAR FROM AGE(BirthDate)) >= 21)
+);
+
+
 
 
 
