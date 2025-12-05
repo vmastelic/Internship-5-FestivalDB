@@ -102,6 +102,15 @@ CREATE TABLE Workshops(
 	RequiresKnowledge BOOLEAN DEFAULT FALSE
 );
 
+CREATE TABLE WorkshopRegistrations(
+	RegistrationId SERIAL PRIMARY KEY,
+	VisitorId INT NOT NULL REFERENCES Visitors(VisitorId),
+	WorkshopId INT NOT NULL REFERENCES Workshops(WorkshopId),
+	RegistrationStatus VARCHAR(20) NOT NULL CHECK(RegistrationStatus IN ('registered', 'canceled', 'attended')),
+	RegistrationTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	UNIQUE (VisitorId, WorkshopId)
+);
+
 
 
 
