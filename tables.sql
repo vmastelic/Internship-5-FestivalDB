@@ -123,6 +123,13 @@ CREATE TABLE Staff(
 	CHECK(Role <> 'security' OR EXTRACT (YEAR FROM AGE(BirthDate)) >= 21)
 );
 
+CREATE TABLE MembershipCards(
+	MembershipCardId SERIAL PRIMARY KEY,
+	VisitorId INT NOT NULL UNIQUE REFERENCES Visitors(VisitorId),
+	ActivationDate DATE NOT NULL DEFAULT CURRENT_DATE,
+	Status VARCHAR(20) NOT NULL CHECK(Status IN('active', 'expired', 'pending'))
+);
+
 
 
 
