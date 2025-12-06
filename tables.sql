@@ -9,6 +9,16 @@ CREATE TABLE Festivals(
 	HasCamp BOOLEAN DEFAULT FALSE
 );
 
+ALTER TABLE Festivals
+DROP CONSTRAINT IF EXISTS festivals_check;
+
+UPDATE Festivals
+SET EndDate = StartDate + (floor(random() * 7) + 1) * INTERVAL '1 day';
+
+ALTER TABLE Festivals
+ADD CONSTRAINT festivals_check
+CHECK (StartDate <= EndDate);
+
 CREATE TABLE Stages (
     StageId SERIAL PRIMARY KEY,
     FestivalId INT NOT NULL REFERENCES Festivals(FestivalId),
@@ -138,9 +148,3 @@ CREATE TABLE MembershipCards(
 	ActivationDate DATE NOT NULL DEFAULT CURRENT_DATE,
 	Status VARCHAR(20) NOT NULL CHECK(Status IN('active', 'expired', 'pending'))
 );
-
-
-
-
-
-
